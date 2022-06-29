@@ -1,0 +1,15 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1> User </h1>
+<hr>
+<form action="" method="Post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save" />
+
+</form>
+<br/>
+<a href="../"> Назад </a>
+{% endblock content %}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- adding custom filters usage -->
+{% load IPG_filters %}
+<!-- adding custom tags usage -->
+{% load IPG_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Еженедельная подписка</title>
+</head>
+<body>
+    <h2>{{ subject }}</h2>
+    <p> Здравствуйте, <h3>{{ user }}</h3>. Новые посты за неделю на выбранные Вами категории:</p>
+    {% if posts_list %}
+            <table width="80%">
+               <tr >
+                   <td>Заголовок</td>
+                   <td>Дата публикации</td>
+                   <td>Релиз</td>
+               </tr>
+
+`                {% for post in posts_list %}`
+`               <tr>
+                    <td>
+                        <a href="http://127.0.0.1:8000/post/{{ post.get_absolute_categoryType }}/{{ post.pk }}">{{ post.title|censor }}</a>
+                    </td>
+                    <td> <span style="font-size:0.8rem">{{ post.dateCreation|date:'d.m.Y' }}</span>><br/> </td>
+                    <td> {{ post.text|truncatewords:20|censor }} </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+
+        {% endif %}
+</body>
+</html>

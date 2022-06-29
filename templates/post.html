@@ -1,0 +1,36 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load IPG_filters %}
+
+{% load IPG_tags %}
+
+<!-- Название у нас будет Product -->
+{% block title %}
+{{ post.categoryType }} № {{ post.id }}
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+<h2>{{ post.title|censor }}</h2>
+<h4>{{ post.dateCreation|date:'d M Y' }}</h4>
+<a href="update/">Редактировать</a><br/>
+<a href="delete/">Удалить</a><br/><br/>
+
+<table align="center" >
+    <h6> Подписаться на категории </h6>
+    <tr>
+        {% for category in post.postCategory.all %}
+        <form action="" method="post">
+        {% csrf_token %}
+            <input type="submit" name="id" value="{{ category }}"/>
+        </form>
+        {% endfor %}
+    </tr>
+</table>
+<hr>
+<h6>{{ post.text|censor }}</h6>
+
+<a href="../">Назад</a>
+
+{% endblock content %}

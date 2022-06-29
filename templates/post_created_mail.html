@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подписка</title>
+</head>
+<body>
+    <h2>{{ post.title }}.</h2>
+    <h4> Автор: {{ post.author.authorUser.username }}. Дата публикации {{ post.dateCreation|date:"d.m.Y" }}</h4>
+<!--    ИСПРАВИТЬ Не показывает имя пользователя-->
+    <p> Здравствуйте, {{ user.username }}. Новый пост по Вашей подписке:
+        <a href="http://127.0.0.1:8000{{ redirectURL }}">{{ post.text|truncatechars:50 }} </p>
+</body>
+</html>
