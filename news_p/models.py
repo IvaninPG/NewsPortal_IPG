@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
+from django.core.cache import cache
 
 
 class Author(models.Model):
@@ -67,6 +68,12 @@ class Post(models.Model):
             return reverse('post_detail', args=[str(self.id)])
         else:
             return reverse('post_detail', args=[str(self.id)])
+
+    def save(self, *args, **kwargs):
+            # вызываем метод родителя, чтобы объект сохранился
+        super().save(*args, **kwargs)
+            # удаляем его из кэша, чтобы сбросить его
+        cache.delete(f'post-{self.pk}')
 
         # ИСПРАВИТЬ возвращает имя константы для использования в URL
     def get_absolute_categoryType(self):

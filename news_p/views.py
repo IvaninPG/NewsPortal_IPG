@@ -9,6 +9,7 @@ from .forms import PostForm
 from .models import Post, Category
 
 from .tasks import notify_subscribers
+from django.core.cache import cache
 
 
 
@@ -65,6 +66,18 @@ class PostDetail(DetailView):
             Category.objects.get(name=category).subscribers.add(request.user)
         return redirect(request.path)
 
+        # Переопределяем метод получения объекта с проверкой есть он в кэш или нет
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}',
+                        None)
+        print('Это кэш')
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+            print('Это из кэш')
+
+        return obj
 
 class PostCreate(PermissionRequiredMixin, CreateView):
     permission_required = 'news_p.add_post'

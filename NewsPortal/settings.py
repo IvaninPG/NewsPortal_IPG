@@ -202,6 +202,6 @@ CACHES = {
             # Указываем, куда будем сохранять кэшируемые файлы!
             # Создать папку cache_files внутри папки с manage.py!
         'LOCATION': os.path.join(BASE_DIR, 'cache_files'),
-        'TIMEOUT': 15,
+
     }
 }
