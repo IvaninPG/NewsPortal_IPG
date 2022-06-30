@@ -12,6 +12,7 @@ from .tasks import notify_subscribers
 
 
 
+
 class PostsList(ListView):
     template_name = 'posts.html'
         # Это имя списка, в котором будут лежать все объекты
