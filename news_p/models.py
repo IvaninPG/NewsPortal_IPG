@@ -75,7 +75,7 @@ class Post(models.Model):
             # удаляем его из кэша, чтобы сбросить его
         cache.delete(f'post-{self.pk}')
 
-        # ИСПРАВИТЬ возвращает имя константы для использования в URL
+        # FIXME возвращает имя константы для использования в URL
     def get_absolute_categoryType(self):
         if self.categoryType == 'NW':
             return 'news'
