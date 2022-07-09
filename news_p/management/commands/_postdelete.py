@@ -1,33 +1,23 @@
 from django.core.management.base import BaseCommand, CommandError
-from polls.models import Question as Poll
+from ...models import Post
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = 'Удаляет все новости выбранной категории'
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'poll_ids',
+            'Category',
             nargs='+',
-            type=int)
+            type=str)
 
-        # Named (optional) arguments
-        parser.add_argument(
-            '--delete',
-            action='store_true',
-            help='Delete poll instead of closing it',
-        )
 
     def handle(self, *args, **options):
-        if options['delete']:
-            poll.delete()
+        self.stdout.readable()
+        self.stdout.write(f"Вы действительно хотите удалить все посты категории {options['Category']}? yes/no")
+        answer = input()
+        if answer =='yes':
+            Post.objects.filter(postCategory=options['Category']).delete()
+            self.stdout.write(self.style.SUCCESS('Посты успешно удалены!'))
+            return
 
-        for poll_id in options['poll_ids']:
-            try:
-                poll = Poll.objects.get(pk=poll_id)
-            except Poll.DoesNotExist:
-                raise CommandError('Poll "%s" does not exist' % poll_id)
-
-            poll.opened = False
-            poll.save()
-
-            self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
+        self.stdout.write(self.style.ERROR('В доступе отказано'))
