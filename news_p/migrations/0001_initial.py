@@ -59,7 +59,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField()),
-                ('dateCreation', models.DateTimeField(auto_now_add=True)),
+                # Изменил вручную datеCreation на dataCreation
+                ('dataCreation', models.DateTimeField(auto_now_add=True)),
                 ('rating', models.SmallIntegerField(default=0)),
                 ('commentPost', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='news_p.post')),
                 ('commentUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
