@@ -29,6 +29,11 @@ class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)    # поле Имени с лимитом символов 2 в степени 6 (принято брать 2 в степени n) и оно уникальное.
     subscribers = models.ManyToManyField(User)
 
+    # для отображения в панели admin
+    @property
+    def subscribers_list(self):
+        return [subscriber for subscriber in self.subscribers.all()]
+
     def __str__(self):
         return self.name
 
@@ -81,6 +86,11 @@ class Post(models.Model):
             return 'news'
         else:
             return 'articls'
+
+    # для отображения в панели admin
+    @property
+    def postCategory_list(self):
+        return [category for category in self.postCategory.all()]
 
 
 
