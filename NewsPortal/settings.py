@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import django.utils.log
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+onwe)0^_twrf2^jl6*kmtv&0*(l=ibq5p2wg9l@wt)klaf-r&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -64,12 +65,12 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.security.SecurityMiddleware', #проверки безопасности:XSS,nosniff,HSTS, CORS, поддержка SSL и т.д.
+    'django.contrib.sessions.middleware.SessionMiddleware', #Включает механизм сессий
+    'django.middleware.common.CommonMiddleware', #позволяет выполнять стандартные процедуры над URL
+    'django.middleware.csrf.CsrfViewMiddleware', #Включает проверку безопасности от угроз типа CSRF
+    'django.contrib.auth.middleware.AuthenticationMiddleware', #Реализует основы аутентификации и идентификации.
+    'django.contrib.messages.middleware.MessageMiddleware',# Включает поддержку сообщений, лежащих в основе работы с куки и сессиями
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     # the new added user
@@ -205,3 +206,124 @@ CACHES = {
 
     }
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style': '{',
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s %(levelname)s %(message)s'
+        },
+        'warning': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s'
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'general': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s'
+        },
+        'errors': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console_debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'console_warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warning'
+        },
+        'console_error': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'errors'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'warning',
+        },
+        'file_general': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'general.log'),
+            'filters': ['require_debug_false'],
+            'formatter': 'general'
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'errors.log'),
+            'filters': ['require_debug_false'],
+            'formatter': 'errors'
+        },
+        'file_security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'security.log'),
+            'filters': ['require_debug_false'],
+            'formatter': 'general',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console_debug', 'console_warning', 'console_error', 'file_general'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['mail_admins', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['mail_admins', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db_backends': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['file_security'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+    }
+}
+
+if DEBUG == False:
+    # SECURE_PROXY_SSL_HEADER = True
+    # SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    ALLOWED_HOSTS = ['*']
+
+ADMINS = [
+    ('Admin', os.getenv('ADMIN_MAIL'))
+]

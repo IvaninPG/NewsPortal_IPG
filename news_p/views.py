@@ -11,8 +11,9 @@ from .models import Post, Category
 from .tasks import notify_subscribers
 from django.core.cache import cache
 
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 class PostsList(ListView):
     template_name = 'posts.html'
